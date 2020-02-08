@@ -6,7 +6,9 @@ var uiController = (function() {
     inputValue: ".add__value",
     addBtn: ".add__btn",
     incomeList: ".income__list",
-    expenseList: ".expenses__list"
+    expenseList: ".expenses__list",
+    incomeSum: ".budget__income--value",
+    expenseSum: ".budget__expenses--value"
   };
 
   return {
@@ -81,6 +83,16 @@ var financeController = (function() {
     this.value = value;
   };
 
+  // Зардал болон орлогуудын нийлбэрийг олдог функц
+  var calculateTotals = function(type) {
+    var sum = 0;
+    data.items[type].forEach(function(el) {
+      sum = sum + el.value;
+    });
+
+    data.totals[type] = sum;
+  };
+
   // private data
   var data = {
     items: {
@@ -91,10 +103,38 @@ var financeController = (function() {
     totals: {
       inc: 0,
       exp: 0
-    }
+    },
+
+    balance: 0,
+
+    expRatio: 0
   };
 
   return {
+    calculateBalance: function() {
+      // Орлогуудын нийлбэрийг олсон
+      calculateTotals("inc");
+
+      // Зардлуудын нийлбэрийг олсон
+      calculateTotals("exp");
+
+      // Балансыг тооцоолсон
+      data.balance = data.totals.inc - data.totals.exp;
+
+      // Орлогод эзлэх зардлын хувийг тооцоолсон
+      data.expRatio = Math.round((data.totals.exp / data.totals.inc) * 100);
+    },
+
+    getBalance: function() {
+      return {
+        // Аль болох хамгийн бага өгөгдлийг бусдад ил болгосноор цаашид алдаа гарахгүй байх давуу талтай
+        balance: data.balance,
+        expenseRatio: data.expRatio,
+        totalInc: data.totals.inc,
+        totalExp: data.totals.exp
+      };
+    },
+
     addItem: function(type, desc, val) {
       var item, id;
 
@@ -139,7 +179,13 @@ var appController = (function(uiController, financeController) {
       uiController.clearFields();
 
       // 4. Төсвийг тооцоолно
-      // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана
+      financeController.calculateBalance();
+
+      // 5. Эцсийн үлдэгдлийг тооцоолно
+      var balance = financeController.getBalance();
+
+      // 6. Тооцоог дэлгэцэнд гаргана
+      console.log(balance);
     }
   };
 
