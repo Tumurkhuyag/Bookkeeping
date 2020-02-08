@@ -101,12 +101,17 @@ var financeController = (function() {
     },
 
     totals: {
+      // Нийт орлого
       inc: 0,
+
+      // Нийт зардал
       exp: 0
     },
 
+    // Үлдэгдлийн дүн
     balance: 0,
 
+    // Орлогогд эзлэх зардлын хувь
     expRatio: 0
   };
 
