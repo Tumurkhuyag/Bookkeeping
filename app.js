@@ -219,16 +219,21 @@ var appController = (function(uiController, financeController) {
       uiController.addListItem(item, input.type);
       uiController.clearFields();
 
-      // 4. Төсвийг тооцоолно
-      financeController.calculateBalance();
-
-      // 5. Эцсийн үлдэгдлийг тооцоолно
-      var balance = financeController.getBalance();
-
-      // 6. Тооцоог дэлгэцэнд гаргана
-      uiController.showBalance(balance);
-      console.log(balance);
+      // 4. Үлдэгдлүүдийн мэдээллийг шинэчлэнэ
+      updateBalance();
     }
+  };
+
+  var updateBalance = function() {
+    // 4. Төсвийг тооцоолно
+    financeController.calculateBalance();
+
+    // 5. Эцсийн үлдэгдлийг тооцоолно
+    var balance = financeController.getBalance();
+
+    // 6. Тооцоог дэлгэцэнд гаргана
+    uiController.showBalance(balance);
+    console.log(balance);
   };
 
   var setupEventListeners = function() {
@@ -264,9 +269,7 @@ var appController = (function(uiController, financeController) {
           uiController.deleteListItem(listId);
 
           // 3. Балансын үлдэгдлийг устгасан бүртгэлийн дагуу шинэчилж харуулна
-          financeController.calculateBalance();
-          var balance = financeController.getBalance();
-          uiController.showBalance(balance);
+          updateBalance();
         }
       });
   };
