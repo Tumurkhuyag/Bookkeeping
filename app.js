@@ -57,17 +57,23 @@ var uiController = (function() {
         balance.expenseRatio + "%";
     },
 
+    deleteListItem: function(id) {
+      document
+        .getElementById(id)
+        .parentNode.removeChild(document.getElementById(id));
+    },
+
     addListItem: function(item, type) {
       // Орлого зарлагын элементийг агуулсан html -ийг бэлтгэнэ.
       var html, list;
       if (type === "inc") {
         list = DOMstrings.incomeList;
         html =
-          '<div class="item clearfix" id="income-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="expense-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
 
       // Тэр HTML дотроо орлого зардлуудын утгуудыг replace ашиглан өөрчилж өгнө.
@@ -245,11 +251,7 @@ var appController = (function(uiController, financeController) {
           event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (listId) {
-          if (listId.split("-")[0] === "income") {
-            var type = "inc";
-          } else {
-            var type = "exp";
-          }
+          var type = listId.split("-")[0];
 
           var itemId = parseInt(listId.split("-")[1]);
 
@@ -259,8 +261,12 @@ var appController = (function(uiController, financeController) {
           financeController.deleteItem(type, itemId);
 
           // 2. Устгасан бүртгэлийг дэлгэц дээрээс устгана
+          uiController.deleteListItem(listId);
 
           // 3. Балансын үлдэгдлийг устгасан бүртгэлийн дагуу шинэчилж харуулна
+          financeController.calculateBalance();
+          var balance = financeController.getBalance();
+          uiController.showBalance(balance);
         }
       });
   };
