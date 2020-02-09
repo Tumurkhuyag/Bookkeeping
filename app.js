@@ -101,6 +101,17 @@ var financeController = (function() {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+
+  Expense.prototype.calcPercentage = function(totalIncome) {
+    if (totalIncome > 0) {
+      this.percentage = Math.round((this.value / totalIncome) * 100);
+    } else this.percentage = 0;
+  };
+
+  Expense.prototype.getPercentage = function() {
+    return this.percentage;
   };
 
   // Зардал болон орлогуудын нийлбэрийг олдог функц
@@ -147,7 +158,23 @@ var financeController = (function() {
       data.balance = data.totals.inc - data.totals.exp;
 
       // Орлогод эзлэх зардлын хувийг тооцоолсон
-      data.expRatio = Math.round((data.totals.exp / data.totals.inc) * 100);
+      if (data.totals.inc > 0) {
+        data.expRatio = Math.round((data.totals.exp / data.totals.inc) * 100);
+      } else data.expRatio = 0;
+    },
+
+    calculatePercentages: function() {
+      data.items.exp.forEach(function(el) {
+        el.calcPercentage(data.totals.inc);
+      });
+    },
+
+    getPercentages: function() {
+      var allPercentages = data.items.exp.map(function(el) {
+        return el.getPercentage();
+      });
+
+      return allPercentages;
     },
 
     getBalance: function() {
@@ -233,7 +260,15 @@ var appController = (function(uiController, financeController) {
 
     // 6. Тооцоог дэлгэцэнд гаргана
     uiController.showBalance(balance);
-    console.log(balance);
+
+    // 7. Элементүүдийн хувийг тооцоолно
+    financeController.calculatePercentages();
+
+    // 8. Элементүүдийн хувийг хүлээж авна
+    var allPercentages = financeController.getPercentages();
+
+    // 9. Элементүүдийн хувийг дэлгэцэнд гаргана
+    console.log(allPercentages);
   };
 
   var setupEventListeners = function() {
