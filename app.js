@@ -10,7 +10,8 @@ var uiController = (function() {
     totalIncomeLabel: ".budget__income--value",
     totalExpenseLabel: ".budget__expenses--value",
     balanceLabel: ".budget__value",
-    expenseRatioLabel: ".budget__expenses--percentage"
+    expenseRatioLabel: ".budget__expenses--percentage",
+    containerDiv: ".container"
   };
 
   return {
@@ -231,17 +232,37 @@ var appController = (function(uiController, financeController) {
       ctrlAddItem();
     });
 
-    document
-      .querySelector(".container")
-      .addEventListener("click", function(event) {
-        console.log(event);
-      });
-
     document.addEventListener("keypress", function(event) {
       if ((event.keyCode === 13) | (event.which === 13)) {
         ctrlAddItem();
       }
     });
+
+    document
+      .querySelector(DOM.containerDiv)
+      .addEventListener("click", function(event) {
+        var listId =
+          event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+        if (listId) {
+          if (listId.split("-")[0] === "income") {
+            var type = "inc";
+          } else {
+            var type = "exp";
+          }
+
+          var itemId = parseInt(listId.split("-")[1]);
+
+          console.log(type + " нь " + itemId + " id -тай");
+
+          // 1. Санхүүгийн модулиас type, id ашиглан орлого эсвэл зардлын бүртгэлийг устгана
+          financeController.deleteItem(type, itemId);
+
+          // 2. Устгасан бүртгэлийг дэлгэц дээрээс устгана
+
+          // 3. Балансын үлдэгдлийг устгасан бүртгэлийн дагуу шинэчилж харуулна
+        }
+      });
   };
 
   return {
