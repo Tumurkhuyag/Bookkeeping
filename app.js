@@ -153,6 +153,22 @@ var financeController = (function() {
       };
     },
 
+    // Бүртгэлийн жагсаалтаас устгах
+    deleteItem: function(type, id) {
+      // Орлого зардлын жасгаалтаас устгаж буй бүртгэлийн type -д харгалзах зөвхөн id -аас бүрдэх массив үүсгэх
+      var ids = data.items[type].map(function(el) {
+        return el.id;
+      });
+
+      // Барьж авсан id үүсгэсэн массивийн хэддүгээр массив болохыг тодорхойлох
+      var index = ids.indexOf(id);
+
+      // Барьж авсан id нь type -ийн бүртгэл болохыг тогтоож жагсаалтаас устгах
+      if (index !== -1) {
+        data.items[type].splice(index, 1);
+      }
+    },
+
     addItem: function(type, desc, val) {
       var item, id;
 
@@ -214,6 +230,12 @@ var appController = (function(uiController, financeController) {
     document.querySelector(DOM.addBtn).addEventListener("click", function() {
       ctrlAddItem();
     });
+
+    document
+      .querySelector(".container")
+      .addEventListener("click", function(event) {
+        console.log(event);
+      });
 
     document.addEventListener("keypress", function(event) {
       if ((event.keyCode === 13) | (event.which === 13)) {
